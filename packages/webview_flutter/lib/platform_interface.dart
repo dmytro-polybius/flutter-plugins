@@ -185,12 +185,15 @@ class WebSettings {
 /// Configuration to use when creating a new [WebViewPlatformController].
 class CreationParams {
   CreationParams(
-      {this.initialUrl, this.webSettings, this.javascriptChannelNames});
+      {this.initialUrl, this.requiresAppPermissions, this.webSettings, this
+          .javascriptChannelNames});
 
   /// The initialUrl to load in the webview.
   ///
   /// When null the webview will be created without loading any page.
   final String initialUrl;
+
+  final bool requiresAppPermissions;
 
   /// The initial [WebSettings] for the new webview.
   ///

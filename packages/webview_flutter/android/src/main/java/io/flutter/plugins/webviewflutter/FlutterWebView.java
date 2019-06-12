@@ -9,6 +9,8 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Handler;
 import android.view.View;
+import android.webkit.PermissionRequest;
+import android.webkit.WebChromeClient;
 import android.webkit.WebStorage;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -22,8 +24,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import static java.lang.Boolean.parseBoolean;
+
 public class FlutterWebView implements PlatformView, MethodCallHandler {
   private static final String JS_CHANNEL_NAMES_FIELD = "javascriptChannelNames";
+  private static final String REQUIRES_APP_PERMISSIONS = "requiresAppPermissions";
   private final WebView webView;
   private final MethodChannel methodChannel;
   private final FlutterWebViewClient flutterWebViewClient;
@@ -44,6 +49,11 @@ public class FlutterWebView implements PlatformView, MethodCallHandler {
 
     if (params.containsKey(JS_CHANNEL_NAMES_FIELD)) {
       registerJavaScriptChannelNames((List<String>) params.get(JS_CHANNEL_NAMES_FIELD));
+    }
+
+    if (params.containsKey(REQUIRES_APP_PERMISSIONS)
+            && parseBoolean((String)params.get(REQUIRES_APP_PERMISSIONS))) {
+      registerOnPermissionsRequest();
     }
 
     if (params.containsKey("initialUrl")) {
@@ -231,6 +241,17 @@ public class FlutterWebView implements PlatformView, MethodCallHandler {
       webView.addJavascriptInterface(
           new JavaScriptChannel(methodChannel, channelName, platformThreadHandler), channelName);
     }
+  }
+
+  private void registerOnPermissionsRequest(){
+      webView.setWebViewClient(new WebViewClient());
+      webView.setWebChromeClient(new WebChromeClient(){
+          @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+          @Override
+          public void onPermissionRequest(final PermissionRequest request) {
+              request.grant(request.getResources());
+          }
+      });
   }
 
   @Override

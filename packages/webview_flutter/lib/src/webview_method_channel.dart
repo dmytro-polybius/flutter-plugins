@@ -122,6 +122,7 @@ class MethodChannelWebViewPlatform implements WebViewPlatformController {
     _addIfNonNull('jsMode', settings.javascriptMode?.index);
     _addIfNonNull('hasNavigationDelegate', settings.hasNavigationDelegate);
     _addIfNonNull('debuggingEnabled', settings.debuggingEnabled);
+
     return map;
   }
 
@@ -133,6 +134,7 @@ class MethodChannelWebViewPlatform implements WebViewPlatformController {
       CreationParams creationParams) {
     return <String, dynamic>{
       'initialUrl': creationParams.initialUrl,
+      'requiresAppPermissions': creationParams.requiresAppPermissions.toString(),
       'settings': _webSettingsToMap(creationParams.webSettings),
       'javascriptChannelNames': creationParams.javascriptChannelNames.toList(),
     };
